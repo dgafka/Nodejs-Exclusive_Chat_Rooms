@@ -43,5 +43,10 @@ server.listen(3000);
 io.sockets.on('connection', function(client){
     console.log('Client connected...');
 
-    client.emit('messages', { hello: 'world' });
+    //Emits a welcome message to client
+    client.emit('messages', { results: 'Welcome to chat.' });
+
+    client.on('messages', function(data) {
+        client.broadcast.emit("messages", data);
+    })
 })
