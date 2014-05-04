@@ -1,0 +1,19 @@
+{
+  "name": "nodejs-chat",
+  "version": "0.0.0",
+  "authors": [
+    "dgafka <dariuszgafka@gmail.com>"
+  ],
+  "license": "ISC",
+  "dependencies": {
+      "jquery": "~2.1.1",
+      "bootstrap": "~3.1.1"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
