@@ -1,10 +1,20 @@
 #chat {
-    max-width: 500px;
-    max-height: 500px;
-    border: 2px solid black;
+  border: 2px solid black;
+  width: 500px;
+  height: 500px;
 }
-
-.text-chat {
-    height: 400px;
-    border-bottom: black 2px solid;
+#chat .text-chat {
+  height: 400px;
+  border-bottom: black 2px solid;
+  overflow: scroll;
+}
+#chat .input-chat {
+  background-color: blue;
+}
+#chat .input-chat #contentMessage {
+  float: left;
+  width: 80%;
+}
+#chat .input-chat #sendMessage {
+  float: right;
 }
