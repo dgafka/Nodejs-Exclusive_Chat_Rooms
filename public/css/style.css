@@ -18,3 +18,6 @@
 #chat .input-chat #sendMessage {
   float: right;
 }
+#chat .input-chat .test {
+  text-align: center;
+}

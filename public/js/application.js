@@ -1,10 +1,10 @@
 $(document).ready(function() {
 
     // Create SocketIO instance
-    var server = io.connect('http://localhost:3000');
+    var socket = io.connect('http://localhost:3000');
 
     //Recive message and appends message to chat
-    server.on('messages', function(data) {
+    socket.on('messages', function(data) {
         //escape js and html
         $('.text-chat').append($('<div></div>').text(data.results));
     });
@@ -17,7 +17,7 @@ $(document).ready(function() {
         $(this).children('#contentMessage').val('')
 
         //Emits a message to an server.
-        server.emit('messages', {'results': content + "<br/>"});
+        socket.emit('messages', {'results': content + "<br/>"});
 
         //Prevent submiting the form
         event.preventDefault();
