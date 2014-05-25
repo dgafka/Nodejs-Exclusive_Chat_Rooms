@@ -21,9 +21,9 @@ var flash 	    = require('connect-flash');
 app.configure(function () {
 
 
-    //view type
+    /** view engine ejs for templates */
     app.set('view engine', 'ejs');
-    // get information from html forms
+    /** get information from html forms */
     app.use(express.json());
     app.use(express.urlencoded());
 
@@ -35,7 +35,10 @@ app.configure(function () {
     app.use(passport.session()); // persistent login sessions
     app.use(flash()); // use connect-flash for flash messages stored in session
 
-    //Less compiler
+    /**
+     * Less compiler, should compile every time server is restarted.
+     * @TODO doesn't compile less.
+     */
     app.use(less({
         src: path.join(__dirname, 'less'),
         dest: path.join(__dirname, 'public/css'),
@@ -46,10 +49,17 @@ app.configure(function () {
         force: true
     }));
 
-    //views
+    /** Add view to easy serve them under /{name_of_view} */
     app.set('views', __dirname + '/views');
 
-    //client libaries
+    /**
+     * Helps to handle request via routes, before serving static files.
+     * Ip app.router would be placed after "client libaries", application would search for static files under the route first
+     * which is optimalization fail.
+     */
+    app.use(app.router);
+
+    /** Serve client libaries */
     app.use(express.static(path.join(__dirname, 'public')));
     app.use(express.static(path.join(__dirname, 'bower_components/jquery/dist')));
     app.use(express.static(path.join(__dirname, 'bower_components/bootstrap/dist')));
