@@ -103,6 +103,13 @@ var routes      = require('./routes/routes')(app, passport);
 /** Passport configuration */
 require('./modules/passport')(passport);
 
+
+//*******************************
+//
+// Socket.io authorization access to connect to the server via websockets
+//
+//*******************************
+
 var onAuthorizeSuccess = function (data, accept) {
     console.log('Authorized access to socket.io');
     accept(null, true);
@@ -125,6 +132,12 @@ io.set('authorization', passportSocketIo.authorize({
     success: onAuthorizeSuccess,
     fail: onAuthorizeFail
 }));
+
+//*******************************
+//
+// Socket.io authorization ends
+//
+//*******************************
 
 /** Server starts to listen on port 3000 */
 server.listen(3000, function() {

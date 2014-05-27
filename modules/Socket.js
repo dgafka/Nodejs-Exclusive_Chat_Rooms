@@ -1,4 +1,4 @@
-/** Events handling in socket.io */
+
 /** on -> getting called when, sockets "emit" an message */
 /** emit -> calls "on" on client side */
 module.exports = function(sockets) {
@@ -32,6 +32,10 @@ module.exports = function(sockets) {
         socket.on('messages', function(message) {
             this.sendClientMessage(socket, message);
         }.bind(this))
+
+        socket.on('chat_create',function(name) {
+            console.log(name);
+        })
 
     }.bind(this))
 

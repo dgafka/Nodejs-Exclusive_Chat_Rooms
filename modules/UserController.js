@@ -1,7 +1,8 @@
 module.exports = function() {
 
     this.user = require('../models/User');
-    this.redis      = require('./Redis');
+    this.redis      = require('redis');
+    this.redisClient = this.redis.createClient();
 
     this.addUser = function(email, password) {
         var user = new this.user();
@@ -10,9 +11,8 @@ module.exports = function() {
         userSchema.lastLogin = new Date();
         userSchema.email = email;
 
-        var redis = new this.redis();
         var userJSON = JSON.stringify(userSchema);
-        redis.getClient().hset(["user_storage", email, userJSON], function(err, results) {
+        this.redisClient.hset(["user_storage", email, userJSON], function(err, results) {
             if(err) {
                 return console.error(err);
             }
@@ -22,14 +22,13 @@ module.exports = function() {
     }
 
     this.findUserByEmailPassword = function(email, password, callback) {
-        var redis = new this.redis();
-        redis.getClient().hexists(['user_storage', email], function(err, results) {
+        this.redisClient.hexists(['user_storage', email], function(err, results) {
             if(err) {
                 return console.error(err);
             }
 
             if(results) {
-                redis.getClient().hget(['user_storage', email], function(err, results) {
+                this.redisClient.hget(['user_storage', email], function(err, results) {
                     if(err) {
                         return console.error(err);
                     }
@@ -52,17 +51,16 @@ module.exports = function() {
             }else {
                 callback(false);
             }
-        })
+        }.bind(this))
     }
 
     this.findUserByEmail = function(email, callback) {
-        var redis = new this.redis();
-        redis.getClient().hexists(['user_storage', email], function(err, results) {
+        this.redisClient.hexists(['user_storage', email], function(err, results) {
             if(err) {
                 return console.error(err);
             }
             if(results) {
-                redis.getClient().hget(['user_storage', email], function(err, results){
+                this.redisClient.hget(['user_storage', email], function(err, results){
                     if(err) {
                         return console.error(err);
                     }
@@ -72,7 +70,7 @@ module.exports = function() {
             }else {
                 callback(false);
             }
-        })
+        }.bind(this))
     }
 
 }

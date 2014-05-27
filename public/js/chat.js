@@ -25,7 +25,7 @@ $(document).ready(function() {
                 '<span class="message-text">' + content + '</span>' +
             '</li>'
         );
-        $(this).parent().parent().children('#message_input').val('')
+        $(this).parent().parent().children('#message_input').val('');
 
         //Emits a message to an server.
         socket.emit('messages', {'data': content});

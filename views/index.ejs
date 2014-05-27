@@ -1,21 +1,19 @@
 <% include header.ejs %>
-
-    <div class="container logged_off">
-
-        <div class="jumbotron text-center">
-            <h1><span class="glyphicon glyphicon-lock"></span>Pick Authentication Type</h1>
-            <button class="btn btn-primary" style="width: 200px"><img src="/img/local.png" class="login_image">Login locally</button>
-            <button class="btn btn-primary" style="width: 200px"><img src="/img/twitter.png" class="login_image">Login via Twitter</button>
-            <button class="btn btn-primary" style="width: 200px"><img src="/img/facebook.png" class="login_image">Login via Facebook</button>
-            <button class="btn btn-primary" style="width: 200px"><img src="/img/google.png" class="login_image">Login via Google</button>
-            <br/>
-            <button class="btn btn-info" style="width: 200px; margin-top: 20px"><a href="/signup">Register locally</a></button>
-        </div>
-    </div>
-    <div class="logged_on">
-        <div class="jumbotron text-center">
-            <button class="btn btn-primary" style="width: 200px;"><img src="/img/local.png" class="login_image">Logout</button>
-        </div>
-    </div>
-
+        <script src="/js/index.js"></script>
+        <% if (email.length < 1) { %>
+            <div class="jumbotron text-center">
+                <h1><span class="glyphicon glyphicon-lock"></span>Pick Authentication Type</h1>
+                <button class="btn btn-primary" style="width: 200px" id="login_locally"><img src="/img/local.png" class="login_image">Login locally</button>
+                <button class="btn btn-primary" style="width: 200px" id="login_twitter"><img src="/img/twitter.png" class="login_image">Login via Twitter</button>
+                <button class="btn btn-primary" style="width: 200px" id="login_facebook"><img src="/img/facebook.png" class="login_image">Login via Facebook</button>
+                <button class="btn btn-primary" style="width: 200px" id="login_google"><img src="/img/google.png" class="login_image">Login via Google</button>
+                <br/>
+                <button class="btn btn-info" style="width: 200px; margin-top: 20px"  id="register_locally">Register locally</button>
+            </div>
+        <% } else { %>
+            <div class="jumbotron text-center">
+                <button class="btn btn-info" style="width: 200px;" id="chat_room"><img src="/img/chat_room.jpg" class="login_image"> Chat room</button>
+                <button class="btn btn-primary" style="width: 200px;" id="logout"><img src="/img/local.png" class="login_image">Logout</button>
+            </div>
+        <% } %>
 <% include footer.ejs %>
