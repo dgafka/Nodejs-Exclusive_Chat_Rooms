@@ -1,3 +1,8 @@
+//*******************************
+//
+// Initalization of necessary modules
+//
+//*******************************
 /** Express application */
 var express     = require('express');
 /** Server configuration (express + http + socket.io) */
@@ -14,22 +19,42 @@ var passport       = require('passport');
 var path        = require('path');
 /** Less compiler */
 var less        = require('less-middleware');
-/** Flash support */
+/** Session Flash support */
 var flash 	    = require('connect-flash');
 
-/** The rest of of server configuration */
+//Session configs
+/** Needed for sessions in socket.io */
+var passportSocketIo = require('passport.socketio');
+var sessionStore = new express.session.MemoryStore();
+/** Secret for parsing session cookie */
+var sessionSecret = 'secrect_service_666';
+/** Name of the cookies where express stores his session */
+var sessionKey = 'connect.sid';
+
+//*******************************
+//
+// Configuration of server
+//
+//*******************************
 app.configure(function () {
 
-
+    var engine = require('ejs-locals-improved');
+    /** use ejs-locals for all ejs templates */
+    app.engine('ejs', engine);
     /** view engine ejs for templates */
     app.set('view engine', 'ejs');
+
     /** get information from html forms */
     app.use(express.json());
     app.use(express.urlencoded());
 
     app.use(express.methodOverride());
     app.use(express.cookieParser('pasSNoTBreakAb4E')); // read cookies (needed for auth)
-    app.use(express.session());
+    app.use(express.session({
+        store: sessionStore,
+        key: sessionKey,
+        secret: sessionSecret
+    }));
     //Passport configuration
     app.use(passport.initialize());
     app.use(passport.session()); // persistent login sessions
@@ -49,7 +74,7 @@ app.configure(function () {
         force: true
     }));
 
-    /** Add view to easy serve them under /{name_of_view} */
+    /** Add view to serve them for client easly */
     app.set('views', __dirname + '/views');
 
     /**
@@ -75,20 +100,41 @@ app.configure('development', function () {
 /** Routes handler */
 var routes      = require('./routes/routes')(app, passport);
 
+/** Passport configuration */
+require('./modules/passport')(passport);
+
+var onAuthorizeSuccess = function (data, accept) {
+    console.log('Authorized access to socket.io');
+    accept(null, true);
+};
+
+var onAuthorizeFail = function (data, message, error, accept) {
+    if (error) {
+        throw new Error(message);
+    }
+    console.log('Unauthorized access to socket.io:', message);
+    accept(null, false);
+};
+
+io.set('authorization', passportSocketIo.authorize({
+    passport: passport,
+    cookieParser: express.cookieParser,
+    key: sessionKey,
+    secret: sessionSecret,
+    store: sessionStore,
+    success: onAuthorizeSuccess,
+    fail: onAuthorizeFail
+}));
+
 /** Server starts to listen on port 3000 */
-server.listen(3000);
+server.listen(3000, function() {
+    console.log("Server has been started at port 3000");
+});
 
-/** Events handling in socket.io */
-/** on -> getting called when, sockets "emit" an message */
-/** emit -> calls "on" on client side */
-io.sockets.on('connection', function(socket){
-    console.log('Client connected...');
-
-    //Emits a welcome message to client
-    socket.emit('messages', { results: 'Connected to chat...' });
-
-    socket.on('messages', function(data) {
-        //Broadcast message over all connected sockets, expect the one which sent the message
-        socket.broadcast.emit("messages", data);
-    })
-})
+//*******************************
+//
+// Socket.io events handling
+//
+//*******************************
+var socketManagment = require('./modules/Socket');
+var socketManagmentClass = new socketManagment(io.sockets);

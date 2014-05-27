@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "ejs": "*",
+    "ejs-locals-improved": "1.0.3",
     "express": "~3.5.2",
     "redis": "0.8.3",
     "socket.io": "~0.9.16",

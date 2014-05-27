@@ -1,9 +1,9 @@
-var redis = require("redis"),
-    client = redis.createClient();
+var redis = require('../modules/Redis');
+
 var bcrypt   = require('bcrypt-nodejs');
 
 var userSchema = {
-
+    id: '',
     local            : {
         email        : String,
         password     : String
@@ -40,4 +40,17 @@ userSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
-client
+exports.module = function() {
+
+    this.addUser = function(email, password) {
+        userSchema.local.email = email;
+        userSchema.local.password = userSchema.generateHash(password);
+        userSchema.id = email
+        var redis = new this.redis();
+        redis.setAdd('users', userSchema);
+    }
+
+    this.findUser = function() {
+
+    }
+}

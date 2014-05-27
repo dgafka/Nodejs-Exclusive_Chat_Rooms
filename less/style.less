@@ -1,35 +1,26 @@
-#chat {
+body {
 
-  border: 2px solid black;
-  width:500px;
-  height:500px;
-
-  .text-chat {
-    height: 400px;
-    border-bottom: black 2px solid;
-    overflow:scroll;
+  .login_image {
+    max-height: 50px;
   }
 
-  .input-chat {
-    background-color: blue;
-
-    #contentMessage {
-      float: left;
-      width: 80%;
-    }
-
-    #sendMessage {
-      float: right;
-    }
-
+  .logged_on {
+    display: none;
   }
 
-}
 
-.login_image {
-  max-height: 50px;
-}
+  ul {
+      list-style-image:url('../img/right_small.png');
+  }
 
-.logged_on {
-  display: none;
+  .message {
+    .message-nickname {
+      text-decoration: underline;
+      font-weight: bold;
+      color: #2aabd2;
+    }
+    .message-nickname:nth-child(2n) {
+      color: #009900 !important;
+    }
+  }
 }

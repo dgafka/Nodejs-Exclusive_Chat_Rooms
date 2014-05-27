@@ -1,23 +1,32 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <!--When server starts, generates js script under above link-->
-    <script src="/socket.io/socket.io.js"></script>
-    <script src='jquery.min.js'></script>
-    <link rel="stylesheet" href='css/bootstrap.min.css' />
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="js/application.js"></script>
-    <title></title>
-</head>
-<body>
-<div id="chat">
-    <div class="text-chat"></div>
-    <div class="input-chat">
-        <form id="messageForm" action="">
-            <input type="text" id="contentMessage">
-            <input type="submit" id="sendMessage">
-        </form>
+<% include header.ejs %>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chat.js"></script>
+
+<div class="container" class="chat">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-comment"></span> Chat
+                </div>
+                <div class="panel-body">
+                    <ul class="chat" id="chat_box">
+                    </ul>
+                </div>
+                <div class="panel-footer">
+                    <div class="input-group">
+                        <input id="message_input" type="text" class="form-control input-sm" placeholder="Message...">
+                        <span class="input-group-btn">
+                            <button class="btn btn-info btn-sm" id="message_send">
+                                Send
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-</body>
-</html>
+
+<% include footer.ejs %>
