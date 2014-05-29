@@ -25,6 +25,23 @@ module.exports = function() {
         return this.chat;
     }
 
+    this.addChat = function(name, owner, messages, users) {
+        this.chat.name  = name;
+        this.chat.owner = owner;
+        this.chat.messages = messages;
+        this.chat.users = users;
+        var chatJSON = JSON.stringify(this.chat);
+
+
+        this.redisClient.hset(["chat_storage", name, chatJSON], function(err, results) {
+            if(err) {
+                return console.error(err);
+            }
+        });
+
+        return this.chat;
+    }
+
     /**
      * Find chat by name
      * @param name
@@ -76,6 +93,41 @@ module.exports = function() {
                 this.redisClient.hdel(['chat_storage', name])
             }
         })
+    }
+
+    /**
+     *  Adds user email to chat room
+     * @param name
+     * @param email
+     */
+    this.addUserToChat = function(name, email) {
+        this.findChatByName(name, function(err, results){
+            results.users.push(email);
+            this.addChat(name, results.owner,  results.messages, results.users);
+        }.bind(this))
+    }
+
+    /**
+     * Removes user email from chat room
+     * @param name
+     * @param email
+     */
+    this.removeUserFromChat = function(name, email) {
+        this.findChatByName(name, function(err, results){
+            results.users.forEach(function(userEmail, index){
+                if(userEmail == email) {
+                    delete results.users[index];
+                }
+                this.addChat(name, results.owner,  results.messages, results.users);
+            }.bind(this))
+        }.bind(this))
+    }
+
+
+
+    this.findAllChats = function(callback) {
+        var chats = [];
+        this.redisClient.hkeys('chat_storage', callback);
     }
 
 }

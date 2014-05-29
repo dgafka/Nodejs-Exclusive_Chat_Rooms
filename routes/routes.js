@@ -68,7 +68,7 @@ module.exports = function (app, passport) {
     /**
      * Route to list of chats
      */
-    app.get('/chat', isLogged, function(req, res){
+    app.get('/chat/:name', isLogged, function(req, res){
         res.render('chat.ejs', { message: req.flash('message'), 'email' : req.user.email });
     })
 

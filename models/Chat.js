@@ -1,6 +1,8 @@
 module.exports = {
 
-    name  : String,
-    owner : String
+    name     : String,
+    owner    : String,
+    messages : [],
+    users    : []
 
 }

@@ -6,9 +6,10 @@ $(document).ready(function() {
     //Recive message and appends message to chat
     socket.on('chat_rooms', function(data) {
         data = data.data;
+        $('#chat_box').empty();
         data.forEach(function(chat, index){
             $('#chat_box').append(
-                '<li>'+ chat.name +'</li>'
+                '<li><a href="/chat/'+ chat +'"> '+ chat +'</a></li>'
             )
         })
     });

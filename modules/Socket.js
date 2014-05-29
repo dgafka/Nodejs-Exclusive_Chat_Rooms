@@ -13,6 +13,8 @@ module.exports = function(sockets) {
 
         //Emits a welcome message to client
         socket.emit('messages', { data: data });
+
+        this.emitChatRooms(socket);
     }
 
     this.sendClientMessage = function(socket, message) {
@@ -21,7 +23,47 @@ module.exports = function(sockets) {
             nickname: socket.handshake.user.email
         };
         //Broadcast message over all connected sockets, expect the one which sent the message
-        socket.broadcast.emit("messages", {data: data});
+//        socket.broadcast.emit("messages", {data: data});
+        socket.broadcast.in('/chat/dar2').emit("messages", {data: data});
+    }
+
+    /**
+     * Sends chat rooms to client
+     */
+    this.emitChatRooms = function(socket) {
+        var chat = require('./ChatController');
+        var chatController     = new chat();
+        var chatRooms = chatController.findAllChats(function(err, results){
+            if(err){
+                return console.error(err);
+            }
+            socket.emit('chat_rooms', {data: results})
+        });
+    }
+
+//    /**
+//     * Add user to chat room
+//     * @param socket
+//     * @param chatName
+//     */
+//    this.addUserToChat = function(socket, chatName) {
+//        socket.join(chatName);
+//    }
+//
+//    /**
+//     * Makes user leave the chat room
+//     * @param socket
+//     * @param chatName
+//     */
+//    this.removeUserFromChat = function(socket, chatName) {
+//        socket.leave(chatName);
+//    }
+
+    this.userDelegateToChat = function(email, chatName){
+        var chat = require('./ChatController');
+        var chatController     = new chat();
+
+        chatController.addUserToChat(chatName, email);
     }
 
     /** socket as parameter connection to client */
@@ -29,13 +71,21 @@ module.exports = function(sockets) {
 
         this.firstConnect(socket);
 
+        socket.on('user_joins_chat', function(chatName){
+            socket.join(chatName);
+            this.userDelegateToChat(socket.handshake.user.email, chatName);
+        }.bind(this))
+
         socket.on('messages', function(message) {
             this.sendClientMessage(socket, message);
         }.bind(this))
 
         socket.on('chat_create',function(name) {
-            console.log(name);
-        })
+            var chat = require('./ChatController');
+            var chatController     = new chat();
+            chatController.addChat(name, socket.handshake.user.email);
+            this.emitChatRooms(socket);
+        }.bind(this))
 
     }.bind(this))
 
