@@ -23,8 +23,8 @@ module.exports = function(sockets) {
             nickname: socket.handshake.user.email
         };
         //Broadcast message over all connected sockets, expect the one which sent the message
-//        socket.broadcast.emit("messages", {data: data});
-        socket.broadcast.in('/chat/dar2').emit("messages", {data: data});
+        socket.broadcast.emit("messages", {data: data});
+//        socket.broadcast.to(chatroom).emit("messages", {data: data});
     }
 
     /**
@@ -33,7 +33,7 @@ module.exports = function(sockets) {
     this.emitChatRooms = function(socket) {
         var chat = require('./ChatController');
         var chatController     = new chat();
-        var chatRooms = chatController.findAllChats(function(err, results){
+        chatController.findAllChats(function(err, results){
             if(err){
                 return console.error(err);
             }
@@ -66,6 +66,13 @@ module.exports = function(sockets) {
         chatController.addUserToChat(chatName, email);
     }
 
+    this.userUndelegateFromChat = function(email, chatName){
+        var chat = require('./ChatController');
+        var chatController     = new chat();
+
+        chatController.removeUserFromChat(chatName, email);
+    }
+
     /** socket as parameter connection to client */
     this.sockets.on('connection', function(socket) {
 
@@ -74,6 +81,11 @@ module.exports = function(sockets) {
         socket.on('user_joins_chat', function(chatName){
             socket.join(chatName);
             this.userDelegateToChat(socket.handshake.user.email, chatName);
+        }.bind(this))
+
+        socket.on('user_leaves_chat', function(chatName){
+            socket.leave(chatName);
+            this.userUndelegateFromChat(socket.handshake.user.email, chatName);
         }.bind(this))
 
         socket.on('messages', function(message) {
