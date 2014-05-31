@@ -9,12 +9,12 @@ If you want to have working multi-rooms, you need to add it.
 Models and controllers for that are done, so just easy to do implementation with websockets.
 
 
-What do you need to run this app:
-1) Redis server
-2) Node.js of course
+What do you need to run this app:<br/>
+1) Redis server<br/>
+2) Node.js of course<br/><br/>
 
---Run redis server on your local machine.
---Run "npm install" from inside of the project.
---Run "bower install" from inside of the project.
---Run "node server.js"
+--Run redis server on your local machine.<br/>
+--Run "npm install" from inside of the project.<br/>
+--Run "bower install" from inside of the project.<br/>
+--Run "node server.js"<br/>
 --Go to localhost:3000, and enjoy.
