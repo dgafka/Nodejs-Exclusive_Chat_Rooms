@@ -100,10 +100,23 @@ module.exports = function() {
      * @param name
      * @param email
      */
-    this.addUserToChat = function(name, email) {
-        this.findChatByName(name, function(err, results){
-            results.users.push(email);
-            this.addChat(name, results.owner,  results.messages, results.users);
+    this.addUserToChat = function(name, email, callback) {
+        this.findChatByName(name, function(results){
+            var userController = require('./UserController');
+            var user           = new userController();
+            user.updateUserRoom(email, name, function(added){
+                if(added) {
+                    if(typeof results.users == "undefined") {
+                        results.users = [];
+                    }
+                    results.users.push(email);
+                    this.addChat(name, results.owner,  results.messages, results.users);
+                    callback(true);
+                    return;
+                }
+
+                callback(false);
+            }.bind(this))
         }.bind(this))
     }
 
@@ -112,13 +125,23 @@ module.exports = function() {
      * @param name
      * @param email
      */
-    this.removeUserFromChat = function(name, email) {
-        this.findChatByName(name, function(err, results){
-            results.users.forEach(function(userEmail, index){
-                if(userEmail == email) {
-                    delete results.users[index];
-                }
-                this.addChat(name, results.owner,  results.messages, results.users);
+    this.removeUserFromChat = function(email) {
+        var userController = require('./UserController');
+        var user           = new userController();
+        user.findUserByEmail(email, function(err, user){
+            this.findChatByName(user.room, function(err, results){
+                results.users.forEach(function(userEmail, index){
+                    if(userEmail == email) {
+                        delete results.users[index];
+                    }
+                    this.addChat(user.room, results.owner,  results.messages, results.users);
+                    user.updateUserRoom(email, null, function(err, results) {
+                        if(err) {
+                            return console.error(err);
+                        }
+                    })
+
+                }.bind(this))
             }.bind(this))
         }.bind(this))
     }

@@ -12,7 +12,7 @@ module.exports = function(sockets) {
         };
 
         //Emits a welcome message to client
-        socket.emit('messages', { data: data });
+        socket.emit('messages', { data: data});
 
         this.emitChatRooms(socket);
     }
@@ -41,29 +41,11 @@ module.exports = function(sockets) {
         });
     }
 
-//    /**
-//     * Add user to chat room
-//     * @param socket
-//     * @param chatName
-//     */
-//    this.addUserToChat = function(socket, chatName) {
-//        socket.join(chatName);
-//    }
-//
-//    /**
-//     * Makes user leave the chat room
-//     * @param socket
-//     * @param chatName
-//     */
-//    this.removeUserFromChat = function(socket, chatName) {
-//        socket.leave(chatName);
-//    }
-
-    this.userDelegateToChat = function(email, chatName){
+    this.userDelegateToChat = function(email, chatName, callback){
         var chat = require('./ChatController');
         var chatController     = new chat();
 
-        chatController.addUserToChat(chatName, email);
+        chatController.addUserToChat(chatName, email, callback);
     }
 
     this.userUndelegateFromChat = function(email, chatName){
@@ -79,8 +61,14 @@ module.exports = function(sockets) {
         this.firstConnect(socket);
 
         socket.on('user_joins_chat', function(chatName){
-            socket.join(chatName);
-            this.userDelegateToChat(socket.handshake.user.email, chatName);
+            this.userDelegateToChat(socket.handshake.user.email, chatName, function(results){
+                if(results) {
+                    socket.join(chatName);
+                    socket.emit('messages', {'data' : 'Joined chat.'})
+                    return;
+                }
+                socket.emit('messages', {'data' : 'Sorry, but you\'re member of other chat already'})
+            });
         }.bind(this))
 
         socket.on('user_leaves_chat', function(chatName){
@@ -98,6 +86,10 @@ module.exports = function(sockets) {
             chatController.addChat(name, socket.handshake.user.email);
             this.emitChatRooms(socket);
         }.bind(this))
+
+        socket.on('disconnect', function(){
+            var email = socket.handshake.user.email;
+        })
 
     }.bind(this))
 

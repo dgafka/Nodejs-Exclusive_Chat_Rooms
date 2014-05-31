@@ -7,7 +7,7 @@ module.exports = function() {
         email      : String,
         password   : String,
         lastLogin  : new Date(),
-        rooms      : []
+        room       : String
     }
 
     /** generating a hash */

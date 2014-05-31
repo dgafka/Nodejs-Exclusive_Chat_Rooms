@@ -15,6 +15,12 @@ $(document).ready(function() {
         );
     });
 
+    //Well, that's wrong... But suddenly I have no time to fix it.
+    //If you want to improve application, you should consider, refactoring joining to chat
+    //Now its via "get" method (check routing) and it should be done ansychronizly via websockets.
+    var chat = window.location.href.split('/')[4];
+    socket.emit('user_joins_chat', chat)
+
     //Send a message to the server
     $('#message_send').on("click", function(event){
         //Manipulate data
